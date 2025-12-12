@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="theme-color" content="#6366f1">
+    <title>Book Notes</title>
+    <link rel="stylesheet" href="/styles.css">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>📚 Book Notes</h1>
+            <p class="subtitle">Discover and organize your favorite books</p>
+        </header>
+
+        <div class="add-book-section">
+            <% if (message) { %>
+                <div class="alert"> <%= message %> </div>
+            <% } %>
+            <h2 style="margin-bottom: 20px; color: var(--text-dark);">Add a New Book</h2>
+            <form action="/addBook" method="POST">
+                <div class="form-group">
+                    <input 
+                        type="text" 
+                        name="title" 
+                        placeholder="Enter book title..." 
+                        required
+                        autocomplete="off"
+                    >
+                    <select name="rating" required style="padding: 14px 18px; border: 2px solid var(--border-color); border-radius: 10px; font-size: 1rem; font-family: inherit; transition: var(--transition);">
+                        <option value="" disabled selected>Select rating...</option>
+                        <option value="5">⭐⭐⭐⭐⭐ (5/5)</option>
+                        <option value="4">⭐⭐⭐⭐ (4/5)</option>
+                        <option value="3">⭐⭐⭐ (3/5)</option>
+                        <option value="2">⭐⭐ (2/5)</option>
+                        <option value="1">⭐ (1/5)</option>
+                    </select>
+                    <button type="submit">Add Book</button>
+                </div>
+            </form>
+        </div>
+
+        <div class="books-section">
+            <% if (books && books.length > 0) { %>
+                <% books.forEach(function(book, index) { %>
+                    <div class="book-card">
+                        <div class="book-cover">
+                            <% if (book.coverpageurl) { %>
+                                <img src="<%= book.coverpageurl %>" alt="<%= book.title %>" onerror="this.parentElement.innerHTML='<div class=&quot;book-cover-placeholder&quot;>📖</div>'">
+                            <% } else { %>
+                                <div class="book-cover-placeholder">📖</div>
+                            <% } %>
+                        </div>
+                        <div class="book-info">
+                            <h3 class="book-title"><%= book.title %></h3>
+                            <p class="book-author">by <%= book.author %></p>
+                            <div class="book-rating" style="margin-bottom: 10px;">
+                                <% for (let i = 0; i < book.rating; i++) { %>⭐<% } %>
+                                <span style="margin-left: 5px; color: var(--text-light); font-size: 0.9rem;">(<%= book.rating %>/5)</span>
+                            </div>
+                            <form action="/deleteBook" method="POST" style="margin-top: auto;">
+                                <input type="hidden" name="index" value="<%= book.id %>">
+                                <button type="submit" class="delete-btn">Remove</button>
+                            </form>
+                        </div>
+                    </div>
+                <% }); %>
+            <% } else { %>
+                <div class="empty-state">
+                    <div class="empty-state-icon">📚</div>
+                    <h2>No Books Yet</h2>
+                    <p>Start building your collection by adding your first book!</p>
+                    <p style="color: var(--text-light); font-size: 0.9rem;">Try: "The Hobbit", "1984", "Harry Potter", or your favorite book</p>
+                </div>
+            <% } %>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+</body>
+</html>
